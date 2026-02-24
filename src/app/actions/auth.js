@@ -4,8 +4,8 @@ import bcrypt from 'bcryptjs'
 import { redirect } from 'next/navigation'
 import { SignupFormSchema } from '@/app/lib/definitions'
 import { createSession, deleteSession } from '@/app/lib/session'
-import { db } from '@/app/lib/db'
-import { users } from '@/models/User'
+import { connectDB } from '@/app/lib/db'
+import User from '@/models/User'
 
 export async function signup(state, formData) {
   const validatedFields = SignupFormSchema.safeParse({
@@ -23,12 +23,13 @@ export async function signup(state, formData) {
   const { name, email, password } = validatedFields.data
   const hashedPassword = await bcrypt.hash(password, 10)
 
-  const data = await db
-    .insert(users)
-    .values({ name, email, password: hashedPassword })
-    .returning({ id: users.id })
+  await connectDB()
 
-  const user = data[0]
+   const user = await User.create({
+    name,
+    email,
+    password: hashedPassword,
+  })
 
   if (!user) {
     return {
@@ -36,8 +37,39 @@ export async function signup(state, formData) {
     }
   }
 
-  await createSession(user.id)
+    await createSession(user._id.toString())
   redirect('/home')
+}
+
+export async function logout() {
+  await deleteSession()
+  redirect('/login')
+}
+
+export async function login(state, formData) {
+  const email = formData.get('email')?.toString().trim()
+  const password = formData.get('password')?.toString()
+
+  if (!email || !password) {
+    return { message: 'Email and password are required.' }
+  }
+
+  await connectDB()
+
+  const user = await User.findOne({ email })
+
+  if (!user) {
+    return { message: 'Invalid email or password.' }
+  }
+
+  const isPasswordValid = await bcrypt.compare(password, user.password)
+
+  if (!isPasswordValid) {
+    return { message: 'Invalid email or password.' }
+  }
+
+   await createSession(user._id.toString())
+  redirect('/dashboard')
 }
 
 export async function logout() {

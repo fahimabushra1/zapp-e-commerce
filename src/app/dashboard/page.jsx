@@ -1,17 +1,18 @@
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { getUser } from "@/app/lib/dal";
+import LogoutButton from "@/_components/ui/LogOutButton";
 
 export default async function Dashboard() {
-  const session = await getServerSession(authOptions);
+  const user = await getUser();
 
-  if (!session) {
+  if (!user) {
     return <div>Not Authorized</div>;
   }
 
   return (
     <div>
-      <h1>Welcome {session.user.name}</h1>
-      <p>Role: {session.user.role}</p>
+      <h1>Welcome {user.name}</h1>
+      <p>Email: {user.email}</p>
+      <LogoutButton />
     </div>
   );
 }

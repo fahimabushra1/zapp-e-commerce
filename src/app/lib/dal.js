@@ -4,9 +4,8 @@ import { cache } from 'react'
 import { redirect } from 'next/navigation'
 import { cookies } from 'next/headers'
 import { decrypt } from '@/app/lib/session'
-import { db } from '@/app/lib/db' 
-import { users } from '@/models/User' 
-import { eq } from 'drizzle-orm' // replace if using another ORM
+import { connectDB } from '@/app/lib/db'
+import User from '@/models/User'
 
 export const verifySession = cache(async () => {
   const cookie = (await cookies()).get('session')?.value
@@ -24,16 +23,19 @@ export const getUser = cache(async () => {
   if (!session) return null
 
   try {
-    const data = await db.query.users.findMany({
-      where: eq(users.id, session.userId),
-      columns: {
-        id: true,
-        name: true,
-        email: true,
-      },
-    })
+      await connectDB()
 
-    return data[0] ?? null
+    const user = await User.findById(session.userId)
+      .select('_id name email')
+      .lean()
+
+    if (!user) return null
+
+    return {
+      id: user._id.toString(),
+      name: user.name,
+      email: user.email,
+    }
   } catch (error) {
     console.log('Failed to fetch user')
     return null

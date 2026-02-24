@@ -36,7 +36,7 @@
 //       console.log(data);
 
 //       if (!res.ok) {
-//         setError(data.error || "Something went wrong");
+//         setError(data.message || "Something went wrong");
 //         setLoading(false);
 //         return;
 //       }

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import LogoutButton from "@/_components/ui/LogOutButton";
 
 export default function MainNavbar() {
   return (
@@ -15,6 +16,7 @@ export default function MainNavbar() {
         <Link href="/dashboard" prefetch={false}>
           Dashboard
         </Link>
+        <LogoutButton />
       </div>
     </nav>
   );
