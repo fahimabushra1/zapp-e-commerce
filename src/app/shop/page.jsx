@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
+// import { useState } from "react";
+// import LoginModal from "./@modal/(..)login/[id]/page";
 
 const products = [
   { id: 1, name: "Red Shoes", price: 50, category: "men" },
@@ -11,22 +13,59 @@ const products = [
 
 const categories = ["all", "men", "women", "baby"];
 
-export default function ShopPage() {
+export default function ShopPage({ modal }) {
   const searchParams = useSearchParams();
-   const rawCategory = searchParams.get("category");
+  const rawCategory = searchParams.get("category");
 
-  const selectedCategory = categories.includes(rawCategory) ? rawCategory : "all";
+  const selectedCategory = categories.includes(rawCategory)
+    ? rawCategory
+    : "all";
 
- const filteredProducts =
+  const filteredProducts =
     selectedCategory === "all"
       ? products
       : products.filter((product) => product.category === selectedCategory);
+
+  // const [showModal, setShowModal] = useState(false);
+  // const [modalId, setModalId] = useState(null);
+
+  // const openLoginModal = (id) => {
+  //   setModalId(id);
+  //   setShowModal(true);
+  // };
 
   return (
     <div style={{ padding: "20px" }}>
       <h1>Shop</h1>
 
-         <div style={{ display: "flex", gap: "10px", marginBottom: "14px" }}>
+      <Link href="/shop/(..)login/123" modal={true}>
+        <button
+          style={{
+            padding: "6px 12px",
+            background: "#28a745",
+            color: "white",
+            borderRadius: "4px",
+          }}
+        >
+          Login
+        </button>
+      </Link>
+      {/* <div style={{ marginBottom: "20px" }}>
+        <button
+          on// Example ID
+          style={{
+            padding: "6px 12px",
+            backgroundColor: "#28a745",
+            color: "white",
+            border: "none",
+            borderRadius: "4px",
+            cursor: "pointer",
+          }}
+        >
+          Login
+        </button>
+      </div> */}
+      <div style={{ display: "flex", gap: "10px", marginBottom: "14px" }}>
         {categories.map((category) => (
           <Link
             key={category}
@@ -46,7 +85,9 @@ export default function ShopPage() {
         ))}
       </div>
 
-      {selectedCategory !== "all" && <p>Selected Category: {selectedCategory}</p>}
+      {selectedCategory !== "all" && (
+        <p>Selected Category: {selectedCategory}</p>
+      )}
 
       <div style={{ display: "flex", gap: "20px", flexWrap: "wrap" }}>
         {filteredProducts.map((product) => (
@@ -79,6 +120,10 @@ export default function ShopPage() {
           </div>
         ))}
       </div>
+      {/* {showModal && (
+        <LoginModal id={modalId} onClose={() => setShowModal(false)} />
+      )} */}
+      {modal}
     </div>
   );
 }

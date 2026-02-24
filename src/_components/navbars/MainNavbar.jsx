@@ -11,6 +11,7 @@ export default function MainNavbar() {
         <Link href="/home/blog">Blog</Link>
         <Link href="/shop">Shop</Link>
         <Link href="/login">login</Link>
+        <Link href="/register">register</Link>
         <Link href="/dashboard" prefetch={false}>
           Dashboard
         </Link>

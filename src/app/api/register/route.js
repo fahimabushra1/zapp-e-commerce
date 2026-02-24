@@ -1,4 +1,4 @@
-import { createUser } from "@/lib/users";
+import { createUser } from "@/app/lib/users";
 
 export async function POST(req) {
   const { email, password, name } = await req.json();
