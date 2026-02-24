@@ -1,5 +1,6 @@
-import NextAuth from "next-auth"
-import CredentialsProvider from "next-auth/providers/credentials"
+import NextAuth from "next-auth";
+import CredentialsProvider from "next-auth/providers/credentials";
+import { validateUserCredentials } from "@/lib/users";
 
 export const authOptions = {
   providers: [
@@ -10,19 +11,9 @@ export const authOptions = {
         password: {},
       },
       async authorize(credentials) {
-        const { email, password } = credentials
+        const { email, password } = credentials;
 
-        // 🔥 Replace this with DB check
-        if (email === "admin@gmail.com" && password === "123456") {
-          return {
-            id: "1",
-            name: "Admin User",
-            email: "admin@gmail.com",
-            role: "admin",
-          }
-        }
-
-        return null
+         return validateUserCredentials({ email, password });
       },
     }),
   ],
@@ -32,18 +23,18 @@ export const authOptions = {
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        token.role = user.role
+        token.role = user.role;
       }
-      return token
+      return token;
     },
     async session({ session, token }) {
-      session.user.role = token.role
-      return session
+      session.user.role = token.role;
+      return session;
     },
   },
   secret: process.env.NEXT_AUTH_SECRET,
-}
+};
 
-const handler = NextAuth(authOptions)
+const handler = NextAuth(authOptions);
 
-export { handler as GET, handler as POST }
+export { handler as GET, handler as POST };

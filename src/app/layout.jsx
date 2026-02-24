@@ -12,7 +12,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata = {
-  title: "My Next.js App",
+  title: "Zapp E-Commerce",
   description:
     "A simple Next.js application with a custom layout and middleware for authentication and routing and backend integration.",
 };

@@ -9,23 +9,44 @@ const products = [
   { id: 3, name: "Green Bag", price: 35, category: "baby" },
 ];
 
+const categories = ["all", "men", "women", "baby"];
+
 export default function ShopPage() {
   const searchParams = useSearchParams();
+   const rawCategory = searchParams.get("category");
 
-  const category = searchParams.get("category"); // get query param
-  console.log(category)
+  const selectedCategory = categories.includes(rawCategory) ? rawCategory : "all";
 
-  // Filter products
-  const filteredProducts = category
-    ? products.filter((product) => product.category === category)
-    : products;
+ const filteredProducts =
+    selectedCategory === "all"
+      ? products
+      : products.filter((product) => product.category === selectedCategory);
 
   return (
     <div style={{ padding: "20px" }}>
       <h1>Shop</h1>
 
-      {category && <p>Selected Category: {category}</p>}
-      <hr />
+         <div style={{ display: "flex", gap: "10px", marginBottom: "14px" }}>
+        {categories.map((category) => (
+          <Link
+            key={category}
+            href={category === "all" ? "/shop" : `/shop?category=${category}`}
+            style={{
+              textTransform: "capitalize",
+              padding: "6px 10px",
+              borderRadius: "6px",
+              border: "1px solid #ccc",
+              textDecoration: "none",
+              background: selectedCategory === category ? "#007bff" : "white",
+              color: selectedCategory === category ? "white" : "black",
+            }}
+          >
+            {category}
+          </Link>
+        ))}
+      </div>
+
+      {selectedCategory !== "all" && <p>Selected Category: {selectedCategory}</p>}
 
       <div style={{ display: "flex", gap: "20px", flexWrap: "wrap" }}>
         {filteredProducts.map((product) => (
